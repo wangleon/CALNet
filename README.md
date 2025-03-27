@@ -7,7 +7,8 @@ TESS-EBs/<br>
 
 	├── rawData/                # our EB samples  
 	├── preprocessing.py/       # preprocessing method
-	|── preprocessing_imply.py  # how to use our preprocessing method 
+	|── preprocessing_imply.py  # how to use our preprocessing method
+ 	|—— periodogram.py	    # GLS method
 
 
 
