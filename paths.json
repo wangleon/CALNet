@@ -1,0 +1,6 @@
+{
+    "lc_pre_loc": "F:/tess/lc/",
+    "lc_pre_save_loc": "F:/tess/processedData/lc/",
+    "gls_pre_save_loc": "F:/tess/processedData/GLS/",
+    "pred_score_pre_loc": "F:/tess/predict/predScore/"
+}

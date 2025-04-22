@@ -1,5 +1,6 @@
 import os
 import json
+
 import preprocessing as prep
 import periodogram #GLS
 
@@ -68,4 +69,5 @@ for sector in sector_lst:
             PATHS['lc_pre_loc'],
             PATHS['lc_pre_save_loc'],
             PATHS['gls_pre_save_loc'],
-            sector, gap_width, outlier_cut, flux_len, period_lst)
+            sector, gap_width, outlier_cut, flux_len, period_lst
+            )

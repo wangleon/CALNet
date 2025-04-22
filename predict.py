@@ -94,8 +94,8 @@ def predict(sector, lc_pre_save_loc, gls_pre_save_loc):
             ticLst: TIC name list of the sector data
       '''
       # read processed data of TESS
-      lc = pd.read_csv(lc_pre_save_loc + sector + '.csv',header=None)
-      GLS = pd.read_csv(gls_pre_save_loc + sector + '.csv',header=None)
+      lc = pd.read_csv(os.path.join(lc_pre_save_loc, 's{:03d}.csv'.format(sector)),header=None)
+      GLS = pd.read_csv(os.path.join(gls_pre_save_loc, 's{:03d}.csv'.format(sector)),header=None)
       # The first column of the data stores the names of lc.
       ticLst = lc.loc[:,0]
       # Excluding the first column are data points
@@ -141,11 +141,11 @@ def getLabel(predData,threshold):
         predLabel.append(label)
     return predLabel
 
-def crossValidate(sec, th, pred_score_pre_loc, lc_pre_save_loc, gls_pre_save_loc):
+def crossValidate(sector, th, pred_score_pre_loc, lc_pre_save_loc, gls_pre_save_loc):
     '''
     Cross-validation
     Args:
-        sec: sector name.
+        sector (int): sector number.
         th: threshold for determining the category.
         pre_score_pre_loc: The file location prefix where the predScore stored.
         lc_pre_save_loc: The file path prefix where the processed lc  stored.
@@ -156,21 +156,22 @@ def crossValidate(sec, th, pred_score_pre_loc, lc_pre_save_loc, gls_pre_save_loc
         crossEBTic: The intersection set of the predEBTic and trueEBTic.
     '''
     # If no prediction has been made of this sector, perform the prediction and obtain the prediction scores.
-    if(not os.path.exists(pred_score_pre_loc + sec + '.csv')):
-        predData, nameLst = predict(sec, lc_pre_save_loc, gls_pre_save_loc)
+    filename = os.path.join(pred_score_pre_loc, 's{:03d}.csv'.format(sector))
+    if not os.path.exists(filename):
+        predData, nameLst = predict(sector, lc_pre_save_loc, gls_pre_save_loc)
         ticLst = [int(name.split("-")[2]) for name in nameLst]
-        predScore = pd.concat([pd.DataFrame(ticLst),predData],axis= 1)
+        predScore = pd.concat([pd.DataFrame(ticLst),predData],axis=1)
         predScore.columns=["tic","EBscore","OTHERSscore"]
         predScore = predScore.drop_duplicates(subset='tic',keep='first').reset_index(drop=True)
-        predScore.to_csv(pred_score_pre_loc + sec + '.csv',sep=',',index=False)
+        predScore.to_csv(filename, sep=',',index=False)
 
     # If prediction has already been made, directly read the saved prediction score table.
     else:
-        predScore = pd.read_csv(pred_score_pre_loc + sec + '.csv')
+        predScore = pd.read_csv(filename)
 
     # Perform category prediction based on the threshold.
     predEBTic = set(predScore[predScore['EBscore'] >= th]['tic'])
-    trueEBTic = set(EBData[EBData["sector"] == int(sec.strip('s'))]['TIC'])
+    trueEBTic = set(EBData[EBData["sector"] == sector]['TIC'])
     crossEBTic = predEBTic & allTic
     
     return predEBTic,trueEBTic,crossEBTic
