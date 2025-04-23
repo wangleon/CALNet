@@ -57,7 +57,7 @@ flux_len = 4000
 period_lst = np.logspace(-3, 1, 1125)[125:]
 
 
-f = open('../paths.json')
+f = open('paths.json')
 PATHS = json.load(f)
 f.close()
 

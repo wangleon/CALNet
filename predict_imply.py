@@ -14,7 +14,7 @@ allTic = set(EBData['TIC'])
 model = tf.keras.saving.load_model("models/model/CALNet.keras")
 
 
-f = open('../paths.json')
+f = open('paths.json')
 PATHS = json.load(f)
 f.close()
 
