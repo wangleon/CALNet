@@ -75,7 +75,7 @@ This model combines **Convolutional Neural Networks (CNNs)**,
 
   ![image](https://github.com/wangleon/CALNet/blob/main/figures/tmag_hist.png)
 
-  ![image](https://github.com/wangleon/CALNet/blob/main/figures/tmag_hist.png)
+  ![image](https://github.com/wangleon/CALNet/blob/main/figures/hrd.png)
 
 
 ## Usage 
