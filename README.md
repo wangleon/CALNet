@@ -22,3 +22,24 @@ The list of TICs as input of training data can be found in `data/training_sample
 
 ## Model Architecture
 
+![image](https://github.com/wangleon/CALNet/blob/main/figures/CALNet_architecture.png)
+
+*Architecture of CALNet. The structure of CAP modules is shown in the right.*
+
+![image](https://github.com/wangleon/CALNet/blob/main/figures/CBAM_architecture.png)
+
+*Structure of CBAM (Convolutional Block Attention Module), which combines
+CAM (Channel Attention Module) and SAM (Spatial Attention Module)*
+
+## Performance
+
+![image](https://github.com/wangleon/CALNet/blob/main/figures/CALNet_preformance.png)
+
+*Accuracy-loss curves of CALNet on training set and test set (left),
+and confusion matrix of CALNet (right)*
+
+## Results
+Using CALNet, we totally identified 10,533 eclipsing binaries from Sectors 1-88 of TESS
+2-min cadence light curves. The catalog is `output/newecl.dat` with Astropy
+`ascii.fixed_width_two_line` format, including TIC IDs, coordinates, and *V* and *G*
+magnitudes from [TESS Input Catalog v8.2](https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=IV/39/tic82).
