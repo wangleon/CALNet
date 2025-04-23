@@ -67,8 +67,9 @@ This model combines **Convolutional Neural Networks (CNNs)**,
   [TESS Input Catalog v8.2](https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=IV/39/tic82).
 
   Below figures shows the sky position, Tmag (TESS magnitude) histogram, and HRD
-  of the eclipsing binaries identified from this work (blue) and Prša et al.
-  2000 (yellow).
+  of the eclipsing binaries identified from this work (blue) and
+  [Prša et al. 2022](https://ui.adsabs.harvard.edu/abs/2022ApJS..258...16P/abstract)
+  (yellow).
 
   ![image](https://github.com/wangleon/CALNet/blob/main/figures/skymap.png)
 
