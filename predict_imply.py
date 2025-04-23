@@ -11,7 +11,7 @@ EBData = Table.read('data/newclass_samples.dat',
 allTic = set(EBData['TIC'])
 
 # read model cache -- CALNet
-model = tf.keras.saving.load_model("models/model/CALNet.keras")
+model = tf.keras.saving.load_model("CALNet.keras")
 
 
 f = open('paths.json')
