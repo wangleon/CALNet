@@ -60,13 +60,13 @@ This model combines **Convolutional Neural Networks (CNNs)**,
   *Accuracy-loss curves of CALNet on training set and test set (left), and
   confusion matrix of CALNet (right)*
 
-- **Discoveries**: 10,533 eclipsing binaries validated from Sectors 1--88 of
+- **Discoveries**: 10,533 eclipsing binaries validated from Sectors 1-88 of
   TESS 2-minute cadence data through manual inspection. The catalog is
   `output/newecl.dat` with Astropy `ascii.fixed_width_two_line` format,
   including TIC IDs, coordinates, and *V* and *G* magnitudes from
   [TESS Input Catalog v8.2](https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=IV/39/tic82).
 
-  Below figures shows the sky position, Tmag (TESS magnitude) histogram, and HRD
+  Below figures show the sky position, *T* mag (TESS magnitude) histogram, and HRD
   of the eclipsing binaries identified from this work (blue) and
   [Prša et al. 2022](https://ui.adsabs.harvard.edu/abs/2022ApJS..258...16P/abstract)
   (yellow).
