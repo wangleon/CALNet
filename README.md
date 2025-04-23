@@ -43,3 +43,6 @@ Using CALNet, we totally identified 10,533 eclipsing binaries from Sectors 1-88 
 2-min cadence light curves. The catalog is `output/newecl.dat` with Astropy
 `ascii.fixed_width_two_line` format, including TIC IDs, coordinates, and *V* and *G*
 magnitudes from [TESS Input Catalog v8.2](https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=IV/39/tic82).
+
+## See Also
+More details can be found in [arXiv:2504.15875](https://arxiv.org/abs/2504.15875).
