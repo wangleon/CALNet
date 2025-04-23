@@ -3,6 +3,8 @@ CNN Attention LSTM Net, a hybrid deep learning model designed to identify
 **eclipsing binaries** from TESS (Transiting Exoplanet Survey Satellite)
 light curves.
 
+[![arXiv](https://img.shields.io/badge/arXiv-2504.15875-b31b1b.svg)](https://arxiv.org/abs/2504.15875)
+
 ## Overview
 Eclipsing binaries (EBs) are binary star systems exibiting periodic dimming as
 one star passes in front of the other. These systems enable precise measurements
