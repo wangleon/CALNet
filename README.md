@@ -72,13 +72,16 @@ This model combines **Convolutional Neural Networks (CNNs)**,
   (yellow).
 
   <img src="https://github.com/wangleon/CALNet/blob/main/figures/skymap.png"
-    alt="Alt Text" style="width:600px; height:auto;">
+    alt="Sky Map" style="width:800px; height:auto;">
 
-  ![image](https://github.com/wangleon/CALNet/blob/main/figures/skymap.png)
 
-  ![image](https://github.com/wangleon/CALNet/blob/main/figures/tmag_hist.png)
+  <img src="https://github.com/wangleon/CALNet/blob/main/figures/tmag_hist.png"
+    alt="Tmag Histogram" style="width:600px;">
 
-  ![image](https://github.com/wangleon/CALNet/blob/main/figures/hrd.png)
+
+  <img src="https://github.com/wangleon/CALNet/blob/main/figures/hrd.png"
+    alt="Tmag Histogram" style="width:600px;">
+
 
 
 ## Usage 
