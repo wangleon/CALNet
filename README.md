@@ -71,6 +71,9 @@ This model combines **Convolutional Neural Networks (CNNs)**,
   [Prša et al. 2022](https://ui.adsabs.harvard.edu/abs/2022ApJS..258...16P/abstract)
   (yellow).
 
+  <img src="https://github.com/wangleon/CALNet/blob/main/figures/skymap.png"
+    alt="Alt Text" style="width:600px; height:auto;">
+
   ![image](https://github.com/wangleon/CALNet/blob/main/figures/skymap.png)
 
   ![image](https://github.com/wangleon/CALNet/blob/main/figures/tmag_hist.png)
