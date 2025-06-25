@@ -100,8 +100,8 @@ filename of the light curve data in FITS format. This path can be changed in `pa
 The list of TICs as input of training data can be found in `data/training_samples.dat`.
 
 ### Model File
-A trained Keras model file can be downloaded from
-[this link](https://calnet.s3.cn-north-1.amazonaws.com.cn/CALNet.keras).
+A trained torch model file can be downloaded from
+[CNN_CBAM_LSTM_model_dict.pth](https://pan.baidu.com/s/1tI08xP67OENXGD0M5rZsFQ?pwd=ruc4).
 
 ## See Also
 More details can be found in [arXiv:2504.15875](https://arxiv.org/abs/2504.15875).
