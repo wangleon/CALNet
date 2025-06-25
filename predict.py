@@ -20,7 +20,6 @@ model.load_state_dict(torch.load('./CNN_CBAM_LSTM_model_dict.pth'))
 model.to(device)
 
 ###load data
-###positive data
 # T_lc = pd.read_csv("../Predict_Data/S88_processedData/LC/s088.csv", header=None)
 # T_GLS = pd.read_csv("../Predict_Data/S88_processedData/GLS/s088.csv", header=None)
 T_lc = pd.read_csv("../Predict_Data/processedData/LC/s091.csv", header=None)
@@ -29,12 +28,8 @@ T_tic = T_lc.loc[:, 0]
 T_tic_GLS = T_GLS.loc[:, 0]
 T_lcData = T_lc.loc[:, 1:]
 T_GLSData = T_GLS.loc[:, 1:]
-print(np.shape(T_lcData))
-print(np.shape(T_GLSData))
-print(np.shape(T_tic))
 
 single_tic = list(set(T_tic))
-print(len(single_tic))
 
 TIC_id = []
 for i in range(len(T_tic)):
@@ -47,7 +42,7 @@ TICData = torch.tensor(TIC_id, dtype=torch.int64)
 
 dataset = TensorDataset(lcData, GLSData, TICData)
 pred_loader = DataLoader(dataset, batch_size=128)
-print("length of pred_loader:", len(pred_loader))
+
 
 ###predict
 model.eval()
