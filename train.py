@@ -37,11 +37,6 @@ F_tic_GLS = F_GLS.loc[:, 0]
 F_lcData = F_lc.loc[:, 1:]
 F_GLSData = F_GLS.loc[:, 1:]
 
-print(np.shape(F_GLSData))
-print(np.shape(T_GLSData))
-print(np.shape(F_lcData))
-print(np.shape(T_lcData))
-
 ### Combine positive and negative data
 lcData = pd.concat([T_lcData, F_lcData], axis=0)
 GLSData = pd.concat([T_GLSData, F_GLSData], axis=0)
@@ -71,16 +66,6 @@ train_dataset, test_dataset = random_split(dataset, [train_size, test_size], gen
 train_loader = DataLoader(train_dataset, batch_size=128, drop_last=True)
 test_loader = DataLoader(test_dataset, batch_size=128, drop_last=True)
 
-# for lc_batch, gls_batch, labels_batch, TIC_batch in test_loader:
-#     for i in range(len(lc_batch)):
-#         print(i)
-#         fig, ax = plt.subplots(2, 1)
-#         ax[0].plot(lc_batch[i].numpy(), label=labels_batch[i].item())
-#         ax[1].plot(gls_batch[i].numpy(), label=labels_batch[i].item())
-#         plt.legend()
-#         plt.savefig("../data/test_data/{}_{}.png".format(TIC_batch[i].item(), labels_batch[i].item()))
-#         plt.close()
-
 ## train model
 model = CNN_CBAM_LSTM_model()
 model = model.to(device)  # Move model to GPU if available
@@ -108,6 +93,7 @@ for epoch in range(30):  # Example: 10 epochs
     print(f'Epoch [{epoch+1}/10], Loss: {loss.item():.4f}') 
   
 torch.save(model.state_dict(), 'CNN_CBAM_LSTM_model_dict.pth')  # Save the trained model
+
 ### begin testing
 model.eval()  # Set the model to evaluation mode
 test_acc = torchmetrics.Accuracy(task='binary', num_classes=2).to(device)
