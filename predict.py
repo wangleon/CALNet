@@ -1,177 +1,107 @@
-# import csv
-import os
-import numpy as np
+import torch
+from model import *
 import pandas as pd
+import numpy as np
+from torch.utils.data import TensorDataset, DataLoader
+import matplotlib.pyplot as plt
 from astropy.io import fits
-import tensorflow as tf
+import datetime as datetime
 
+starttime = datetime.datetime.now()
+print("Start time:", starttime)
+###利用GPU加速
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-filekey_lst = {
-    1: (2018206045859, 120), 2: (2018234235059, 121),
-    3: (2018263035959, 123), 4: (2018292075959, 124),
-    5: (2018319095959, 125), 6: (2018349182500, 126),
-    7: (2019006130736, 131), 8: (2019032160000, 136),
-    9: (2019058134432, 139), 10: (2019085135100, 140),
-    11: (2019112060037, 143), 12: (2019140104343, 144),
-    13: (2019169103026, 146), 14: (2019198215352, 150),
-    15: (2019226182529, 151), 16: (2019253231442, 152),
-    17: (2019279210107, 161), 18: (2019306063752, 162),
-    19: (2019331140908, 164), 20: (2019357164649, 165),
-    21: (2020020091053, 167), 22: (2020049080258, 174),
-    23: (2020078014623, 177), 24: (2020106103520, 180),
-    25: (2020133194932, 182), 26: (2020160202036, 188),
-    27: (2020186164531, 189), 28: (2020212050318, 190),
-    29: (2020238165205, 193), 30: (2020266004630, 195),
-    31: (2020294194027, 198), 32: (2020324010417, 200),
-    33: (2020351194500, 203), 34: (2021014023720, 204),
-    35: (2021039152502, 205), 36: (2021065132309, 207),
-    37: (2021091135823, 208), 38: (2021118034608, 209),
-    39: (2021146024351, 210), 40: (2021175071901, 211),
-    41: (2021204101404, 212), 42: (2021232031932, 213),
-    43: (2021258175143, 214), 44: (2021284114741, 215),
-    45: (2021310001228, 216), 46: (2021336043614, 217),
-    47: (2021364111932, 218), 48: (2022027120115, 219),
-    49: (2022057073128, 221), 50: (2022085151738, 222),
-    51: (2022112184951, 223), 52: (2022138205153, 224),
-    53: (2022164095748, 226), 54: (2022190063128, 227),
-    55: (2022217014003, 242), 56: (2022244194134, 243),
-    57: (2022273165103, 245), 58: (2022302161335, 247),
-    59: (2022330142927, 248), 60: (2022357055054, 249),
-    61: (2023018032328, 250), 62: (2023043185947, 254),
-    63: (2023069172124, 255), 64: (2023096110322, 257),
-    65: (2023124020739, 259), 66: (2023153011303, 260),
-    67: (2023181235917, 261), 68: (2023209231226, 262),
-    69: (2023237165326, 264), 70: (2023263165758, 265),
-    71: (2023289093419, 266), 72: (2023315124025, 267),
-    73: (2023341045131, 268), 74: (2024003055635, 269),
-    75: (2024030031500, 270), 76: (2024058030222, 271),
-    77: (2024085201119, 272), 78: (2024114025118, 273),
-    79: (2024142205832, 274), 80: (2024170053053, 275),
-    81: (2024196212429, 276), 82: (2024223182411, 278),
-    83: (2024249191853, 280), 84: (2024274222008, 281),
-    85: (2024300212641, 282), 86: (2024326142117, 283),
-    87: (2024353092137, 284), 88: (2025014115807, 285)
-}
+###load model
+# model = torch.load('./CNN_CBAM_LSTM_model.pth', weights_only=False)
 
-def get_lc_file(sector, tic):
-    # get lc file name using its sector and tic
-    timestamp, scid = filekey_lst[sector]
-    return 'tess{:13d}-s{:04d}-{:016d}-{:04d}-s_lc.fits'.format(timestamp, sector, tic, scid)
+model = CNN_CBAM_LSTM_model()
+model.load_state_dict(torch.load('./CNN_CBAM_LSTM_model_dict.pth'))
+model.to(device)
 
-def get_time_flux_from_filepath(filePath):
-    '''
-    get time and flux from file path of lc file
-    Args:
-        filePath: full path of lc file.
-    returns:
-        t: time series.
-        f: flux series.
-    '''
-    table = fits.getdata(filePath)
-    time = table['TIME']
-    flux = table['PDCSAP_FLUX']
-    q_lst = table['QUALITY']
-    m = q_lst == 0
-    time = time[m]
-    flux = flux[m]
-    m2 = ~np.isnan(flux)
-    t = time[m2]
-    f = flux[m2]
-    return t,f
+###load data
+# T_lc = pd.read_csv("../Predict_Data/S88_processedData/LC/s088.csv", header=None)
+# T_GLS = pd.read_csv("../Predict_Data/S88_processedData/GLS/s088.csv", header=None)
+T_lc = pd.read_csv("../Predict_Data/processedData/LC/s091.csv", header=None)
+T_GLS = pd.read_csv("../Predict_Data/processedData/GLS/s091.csv", header=None)
+T_tic = T_lc.loc[:, 0]
+T_tic_GLS = T_GLS.loc[:, 0]
+T_lcData = T_lc.loc[:, 1:]
+T_GLSData = T_GLS.loc[:, 1:]
 
+single_tic = list(set(T_tic))
 
-
-def predict(sector, lc_pre_save_loc, gls_pre_save_loc):
-      '''
-      Load preprocessed data and input it into the model for prediction.
-
-      Args:
-            sector: Sector name (string format)
-            lc_pre_save_loc: The file path prefix where the processed lc  stored.
-            gls_pre_save_loc: The file path prefix where the processed gls  stored.
-      Output:
-            predData: Predicted results (2D vector format)
-            ticLst: TIC name list of the sector data
-      '''
-      # read processed data of TESS
-      lc = pd.read_csv(os.path.join(lc_pre_save_loc, 's{:03d}.csv'.format(sector)),header=None)
-      GLS = pd.read_csv(os.path.join(gls_pre_save_loc, 's{:03d}.csv'.format(sector)),header=None)
-      # The first column of the data stores the names of lc.
-      ticLst = lc.loc[:,0]
-      # Excluding the first column are data points
-      lcData = lc.loc[:,1:]
-      GLSData = GLS.loc[:,1:]
-      
-      # Convert the format to facilitate input into the model.
-      lcData = list(np.array(lcData))
-      lcData = tf.convert_to_tensor(lcData)
-      lcData = tf.expand_dims(lcData, 2)
-      GLSData = list(np.array(GLSData))
-      GLSData = tf.convert_to_tensor(GLSData)
-      GLSData = tf.expand_dims(GLSData, 2)
-
-      # predict
-      predArray = model.predict([lcData,GLSData])
-      #predArray = model.predict(lcData)
-
-      #Save the predicted scores of each class
-      predData = pd.DataFrame(predArray)
-
-      return predData,ticLst
-
-def getLabel(predData,threshold):
-    '''
-    Map the model's predicted results to their respective categories.
-
-    Args:
-        predData: The result data obtained after model prediction.
-        threshold: The threshold for determining the category.
-    Output:
-        predLabel: Predicted category.
-        scoreLst: Scores after prediction
-    '''
-    predLabel = []
-    for i in range(len(predData)):
-        maxone = np.argmax(predData[i])
-        score = predData[i][maxone]
-        if score >= threshold:
-            label = label_lst[maxone]
-        if score < threshold:
-            label = 'NOTSURE'
-        predLabel.append(label)
-    return predLabel
-
-def crossValidate(sector, th, pred_score_pre_loc, lc_pre_save_loc, gls_pre_save_loc):
-    '''
-    Cross-validation
-    Args:
-        sector (int): sector number.
-        th: threshold for determining the category.
-        pre_score_pre_loc: The file location prefix where the predScore stored.
-        lc_pre_save_loc: The file path prefix where the processed lc  stored.
-        gls_pre_save_loc: The file path prefix where the processed gls  stored.
-    return:
-        predEBTic: The set of TICs predicted as EB by the model.
-        trueEBTic: The set of TICs of EBs we already known.
-        crossEBTic: The intersection set of the predEBTic and trueEBTic.
-    '''
-    # If no prediction has been made of this sector, perform the prediction and obtain the prediction scores.
-    filename = os.path.join(pred_score_pre_loc, 's{:03d}.csv'.format(sector))
-    if not os.path.exists(filename):
-        predData, nameLst = predict(sector, lc_pre_save_loc, gls_pre_save_loc)
-        ticLst = [int(name.split("-")[2]) for name in nameLst]
-        predScore = pd.concat([pd.DataFrame(ticLst),predData],axis=1)
-        predScore.columns=["tic","EBscore","OTHERSscore"]
-        predScore = predScore.drop_duplicates(subset='tic',keep='first').reset_index(drop=True)
-        predScore.to_csv(filename, sep=',',index=False)
-
-    # If prediction has already been made, directly read the saved prediction score table.
-    else:
-        predScore = pd.read_csv(filename)
-
-    # Perform category prediction based on the threshold.
-    predEBTic = set(predScore[predScore['EBscore'] >= th]['tic'])
-    trueEBTic = set(EBData[EBData["sector"] == sector]['TIC'])
-    crossEBTic = predEBTic & allTic
+TIC_id = []
+for i in range(len(T_tic)):
+    split = T_tic[i].split('-')
+    TIC_id.append(int(split[2]))
     
-    return predEBTic,trueEBTic,crossEBTic
+lcData = torch.tensor(T_lcData.values, dtype=torch.float32)
+GLSData = torch.tensor(T_GLSData.values, dtype=torch.float32)
+TICData = torch.tensor(TIC_id, dtype=torch.int64)
+
+dataset = TensorDataset(lcData, GLSData, TICData)
+pred_loader = DataLoader(dataset, batch_size=128)
+
+
+###predict
+model.eval()
+predictions = []
+with torch.no_grad():
+    i = 0
+    for lc_batch, gls_batch, tic_batch in pred_loader:
+        print(f"Processing batch {i + 1}")
+        lc_batch = lc_batch.unsqueeze(1).to(device)  # Add channel dimension
+        gls_batch = gls_batch.unsqueeze(1).to(device)  # Add channel dimension
+        outputs = model(lc_batch, gls_batch)
+        _, predicted = torch.max(outputs, 1)
+        tic_batch = tic_batch.numpy()
+        # predictions.extend(zip(tic_batch, outputs.cpu().numpy()))
+        predictions.extend(zip(tic_batch, predicted.cpu().numpy()))
+        i += 1
+
+# print("Predictions:", predictions)
+print(type(predictions))
+print("Number of predictions:", len(predictions))
+
+
+###plot EB light curve
+N_EB = 0
+EB_tic = []
+for i in range(len(predictions)):
+    prob = predictions[i][1]
+    # if prob[1] >= 0.9:
+    if prob == 1: 
+        filename = T_tic[i]
+        EB_tic.append(T_tic[i])
+print("Number of predicted EBs:", len(EB_tic))
+EB_Single_tic = list(set(EB_tic))
+print("Number of unique predicted EBs:", len(EB_Single_tic))
+
+for i in range(len(EB_Single_tic)):
+    filename = EB_Single_tic[i]
+    tic = int(EB_Single_tic[i].split('-')[2])
+    path = '/data/NAS_TESS_LC/tess/lc/s091/' + filename
+    print(path)
+    with fits.open(path) as hdu:
+        # print(hdu.info())
+        data = hdu[1].data
+        time = data['TIME']
+        flux = data['PDCSAP_FLUX']
+        q_lst = data['QUALITY']
+        m = q_lst == 0
+        time = time[m]
+        flux = flux[m]
+        m2 = ~np.isnan(flux)
+        time = time[m2]
+        flux = flux[m2]
+        
+        ###plot
+        fig, ax = plt.subplots(figsize=(18, 6))
+        ax.plot(time, flux, 'o', color='C0', ms=2, alpha=1, label=f'TIC {tic}')
+        ax.set_title(f'Predicted EB Light Curve for TIC {tic}')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Flux')
+        ax.legend()
+        fig.savefig(f'../Predict_Data/Pred_EB_LC/s091/TIC_{tic}.png', bbox_inches='tight', dpi=100)
+        plt.close()
